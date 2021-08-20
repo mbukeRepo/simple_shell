@@ -4,23 +4,29 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-void execute(char **userinput)
+int execute(char **userinput, char **front)
 {
-    int status;
+    int status, flag, ret = 0;
     pid_t child_pid;
     int exec_res;
+    char *command = userinput[0];
+
+    if (command[0] != '.' && command[0] != '/')
+    {
+        // do stuff
+    }
+
     child_pid = fork();
+
     if (child_pid == -1)
     {
-        printf("creation of process failed");
+        perror("Error child:");
+        return (-1);
     }
+
     else if (child_pid == 0)
     {
-        exec_res = execve(userinput[0], userinput, NULL);
-        if (exec_res == -1)
-        {
-            printf("Command failed\n");
-        }
+        execve(command, userinput, NULL);
     }
     else
     {
@@ -33,25 +39,42 @@ void execute(char **userinput)
     //         printf("%s\n", userinput[i]);
     //         i++;
     //     }
+    return (ret);
 }
 
 int main(void)
 {
     char *lineptr = NULL;
     char **userinput;
-    int n = 0;
-    char *argv[] = {"/bin/l", "-l", "/usr/", NULL};
-    // printing prompt
+    char *newline = "\n", *prompt = "$ ";
+    int ret = 0, retn;
 
-    write(STDOUT_FILENO, "$ ", 2);
-    // getting command from user
+    int *exe_ret = &retn;
 
-    _getline(&lineptr, &n, STDIN_FILENO);
-    userinput = _strtok(lineptr, " ");
+    // handle input from terminal
 
-    // executing command
-    execute(argv);
+    // handle input from file
 
-    free(lineptr);
+    // handle input from interractive shell
+
+    while (1)
+    {
+        write(STDOUT_FILENO, prompt, 2);
+        ret = handle_args(exe_ret);
+    }
+
+    // char *argv[] = {"/bin/l", "-l", "/usr/", NULL};
+    // // printing prompt
+
+    // write(STDOUT_FILENO, "$ ", 2);
+    // // getting command from user
+
+    // _getline(&lineptr, &n, STDIN_FILENO);
+    // userinput = _strtok(lineptr, " ");
+
+    // // executing command
+    // execute(argv);
+
+    // free(lineptr);
     return (0);
 }
