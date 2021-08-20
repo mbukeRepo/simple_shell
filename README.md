@@ -2,11 +2,9 @@
 
 Version 1.0.1, August 2021
 
-
 <a name="name"></a>
 
 # Name
-
 
 mshell - a command line interpreter written in c
 
@@ -16,19 +14,18 @@ mshell - a command line interpreter written in c
 
 ```
 
- \f[B]mshell\f[R] [\f[I]filename\f[R]]
+ mshell [\f[I]filename]
 ```
 
 <a name="description"></a>
 
 # Description
 
-
-\f[B]mshell\f[R] is a custom shell interpreter that ships with a bunch
+mshell is a custom shell interpreter that ships with a bunch
 of great featu
 
 res that a local shell interpreter doesnot have.
-when \f[B]mshell\f[R] is invoked wit
+when mshell is invoked wit
 
 h
 
@@ -36,15 +33,14 @@ h
 
 ### Invocation
 
-
-\f[B]mshell\f[R] can be both invoked interractively or
+mshell can be both invoked interractively or
 non-interractively if invoked with standard input not from terminal, it
 can read commands from term inal
 
 if invoked with standard input connected to the terminal, (determined by
 isatty) , an interractive shell is opened
 
-Alternatively, if a command line arg is provided, \f[B]mshell\f[R]
+Alternatively, if a command line arg is provided, mshell
 treats the first ar g as a file from which to read commands.
 The supplied file should contain comman d per line
 
@@ -52,8 +48,7 @@ The supplied file should contain comman d per line
 
 ### Environment
 
-
-Upon invocation, \f[B]mshell\f[R] copies the environment of the parent
+Upon invocation, mshell copies the environment of the parent
 process in whic h it was executed.This environment is an array of
 name-value strings in format o f NAME=VALUE.
 
@@ -61,9 +56,8 @@ name-value strings in format o f NAME=VALUE.
 
 ### Command execution
 
-
-After receiving command, \f[B]mshell\f[R] tokenizes it into words using
-\f[B]\[dq] \[dq]\f[R] as a d elimiter, the first word as the command and
+After receiving command, mshell tokenizes it into words using
+\[dq] \[dq] as a d elimiter, the first word as the command and
 others are arguments.It then proceed s with the following action:
 
 : if the first character of the command is neither a slash () nor dot
@@ -80,8 +74,7 @@ executi on environment
 
 ### Exit status
 
-
-\f[B]mshell\f[R] returns the exit status of the last command executed
+mshell returns the exit status of the last command executed
 with zero indica ting success and a non-zero for failure
 
 if command is not found, return 127; if found but not executable return
@@ -91,8 +84,7 @@ if command is not found, return 127; if found but not executable return
 
 ### Signals
 
-
-While running in interractive mode, \f[B]mshell\f[R] ignores keyboard **
+While running in interractive mode, mshell ignores keyboard **
 ctrl + c ** .
 Alternatively, an EOF input will exit program
 
@@ -100,25 +92,22 @@ Alternatively, an EOF input will exit program
 
 ### Variable replacement
 
-
-* **\f[B]mshell\f[R] interprets $ character for variable replacement**  
-  \f[B]$ENV_VARIABLE\f[R] : ENV_VARIABLE is substituted with its value
-  \f[B]$?\f[R] : ?
+- **mshell interprets $ character for variable replacement**  
+  $ENV_VARIABLE : ENV_VARIABLE is substituted with its value
+  $? : ?
   is substituted with the return value of the last program
-  \f[B]$$\f[R] : $ is substituted the the current process id
+  $$ : $ is substituted the the current process id
 
 <a name="comments"></a>
 
 ### Comments
 
-
-\f[B]mshell\f[R] ignores the all words and characters that preceeded by
+mshell ignores the all words and characters that preceeded by
 a # char
 
 <a name="operators"></a>
 
 ### Operators
-
 
 : ; -Command separator: command separated by this operator are
 processed sequen tially
@@ -131,24 +120,22 @@ executed even if command1 failed
 
 <a name="fbmshellfr-build-in-commands"></a>
 
-### \f[B]mshell\f[R] Build in commands
-
+### mshell Build in commands
 
 <a name="cd"></a>
 
 ### cd
 
-
-\f[B]usage\f[R] :\f[B]cd\f[R] [DIRECTORY]
+usage :cd [DIRECTORY]
 
 changed the current directory to DIRECTORY
 
 if no arg provided the dir will be changed to dir in $HOME
 
-if arg is ** - \f[B], the command is interpreted as \f[R] cd $OLDPWD**
+if arg is ** - , the command is interpreted as cd $OLDPWD**
 and the new working dir is printed
 
-if arg is ** \[en] \f[B], the command is interpreted as \f[R] cd
+if arg is ** \[en] , the command is interpreted as cd
 $OLDPWD** and the new working dir is not printed
 
 the PWD and OLDPWD env var are updated after changing dir
@@ -157,29 +144,26 @@ the PWD and OLDPWD env var are updated after changing dir
 
 ### alias
 
-
-\f[B]usage\f[R] :\f[B]alias\f[R] [NAME=[\`VALUE'] ...].
+usage :alias [NAME=[\`VALUE'] ...].
 Handles aliases
 
-\f[B]alias\f[R] :prints all aliases in form of name-value format
+alias :prints all aliases in form of name-value format
 
-\f[B]alias\f[R] NAME ...:prints aliases NAME and so on, in a
+alias NAME ...:prints aliases NAME and so on, in a
 name-value format
 
-\f[B]alias\f[R] NAME=\`VALUE':defines alias NAME
+alias NAME=\`VALUE':defines alias NAME
 
 <a name="exit"></a>
 
 ### exit
 
-
-\f[B]usage\f[R] : \f[B]exit\f[R] [STATUS] Exits the shell.
-if no status provided it is interpreted as ,\[lq]\f[B]exit\f[R] 0\[rq]
+usage : exit [STATUS] Exits the shell.
+if no status provided it is interpreted as ,\[lq]exit 0\[rq]
 
 <a name="env"></a>
 
 ### env
-
 
 prints current environment
 
@@ -187,13 +171,11 @@ prints current environment
 
 ### setenv
 
-
 initializes new variable , or modifies the existing one.
 
 <a name="unsetenv"></a>
 
 ### unsetenv
-
 
 Removes the environment variable
 
