@@ -4,6 +4,14 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+void sig_handler(int sig)
+{
+    char *newline = "\n$ ";
+    (void)sig;
+    signal(SIGINT, sig_handler);
+    write(STDOUT_FILENO, newline, 3);
+}
+
 int execute(char **userinput, char **front)
 {
     int status, flag, ret = 0;
@@ -14,6 +22,17 @@ int execute(char **userinput, char **front)
     if (command[0] != '.' && command[0] != '/')
     {
         // do stuff
+    }
+    if (!command || access(command, F_OK) == -1)
+    {
+        if (errno == EACCES)
+        {
+            ret = create_error(userinput, 126);
+        }
+        else
+        {
+            ret = create_error(userinput, 127);
+        }
     }
 
     child_pid = fork();
@@ -26,12 +45,15 @@ int execute(char **userinput, char **front)
 
     else if (child_pid == 0)
     {
-        execve(command, userinput, NULL);
+        execve(command, userinput, environ);
+        if (errno == EACCES)
+        {
+            ret = create_error(userinput, 126);
+        }
     }
     else
     {
         wait(&status);
-        printf("Successful executed \n");
     }
     //     int i = 0;
     //     while (i < 3)
@@ -42,14 +64,29 @@ int execute(char **userinput, char **front)
     return (ret);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
     char *lineptr = NULL;
+
     char **userinput;
     char *newline = "\n", *prompt = "$ ";
     int ret = 0, retn;
 
     int *exe_ret = &retn;
+    name = argv[0];
+    printf("%s\n", name);
+    hist = 1;
+    // handle ctrl + d
+
+    signal(SIGINT, sig_handler);
+
+    // COPYING ENVIRONMENT VARIABLES
+
+    environ = _copy_env();
+    if (!environ)
+    {
+        exit(-100);
+    }
 
     // handle input from terminal
 
@@ -61,6 +98,15 @@ int main(void)
     {
         write(STDOUT_FILENO, prompt, 2);
         ret = handle_args(exe_ret);
+        if (ret == END_OF_FILE || ret == EXIT)
+        {
+            if (ret == END_OF_FILE)
+            {
+                write(STDOUT_FILENO, newline, 1);
+            }
+            free_env();
+            exit(*exe_ret);
+        }
     }
 
     // char *argv[] = {"/bin/l", "-l", "/usr/", NULL};
@@ -76,5 +122,6 @@ int main(void)
     // execute(argv);
 
     // free(lineptr);
+    free_env();
     return (0);
 }

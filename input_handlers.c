@@ -26,14 +26,25 @@ int handle_args(int *exe_ret)
     int ret = 0, index;
     char **args, *line = NULL, **front;
     line = get_args(line, exe_ret);
+    if (!line)
+    {
+        return (END_OF_FILE);
+    }
+
     args = _strtok(line, " ");
+    free(line);
 
     if (!args)
     {
         return (ret);
     }
     front = args;
-    ret = call_args(args, front, exe_ret);
+    if (args)
+    {
+        ret = call_args(args, front, exe_ret);
+    }
+    free(front);
+    return (ret);
 }
 
 int call_args(char **args, char **front, int *exe_ret)
@@ -45,10 +56,26 @@ int call_args(char **args, char **front, int *exe_ret)
 int run_args(char **args, char **front, int *exe_ret)
 {
     int i;
-    *exe_ret = execute(args, front);
-    for (i = 0; args[i]; i++)
+    int ret;
+    int (*builtin)(char **args, char **front);
+    builtin = get_builtin(args[0]);
+    if (builtin)
     {
-        free(args[i]);
+        ret = builtin(args + 1, front);
+        if (ret == EXIT)
+        {
+            *exe_ret = ret;
+        }
     }
-    return (*exe_ret);
+    else
+    {
+        *exe_ret = execute(args, front);
+        for (i = 0; args[i]; i++)
+        {
+            free(args[i]);
+        }
+    }
+    hist++;
+
+    return (ret);
 }
