@@ -24,12 +24,13 @@ write(STDOUT_FILENO, newline, 3);
  */
 int execute(char **userinput, char **front)
 {
-int status, flag = 0, ret = 0, exec_res;
+int status, ret = 0;
 pid_t child_pid;
 char *command = userinput[0];
+(void) front;
+(void) userinput;
 if (command[0] != '.' && command[0] != '/')
 {
-flag = 1;
 command = get_location(command);
 }
 if (!command || access(command, F_OK) == -1)
@@ -74,22 +75,17 @@ return (ret);
  */
 int main(int argc, char **argv)
 {
-char *lineptr = NULL;
 
-char **userinput;
 char *newline = "\n", *prompt = "$ ";
 int ret = 0, retn;
 
 int *exe_ret = &retn;
+
+(void) argc;
 name = argv[0];
 
 hist = 1;
-
-
 signal(SIGINT, sig_handler);
-
-
-
 environ = _copy_env();
 if (!environ)
 {

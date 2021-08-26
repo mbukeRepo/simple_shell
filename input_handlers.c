@@ -13,10 +13,10 @@ int check_args(char **args);
   */
 char *get_args(char *line, int *exe_ret)
 {
-(void)exe_ret;
+
 ssize_t read;
 size_t n = 0;
-
+(void)exe_ret;
 read = _getline(&line, &n, STDIN_FILENO);
 if (read == -1)
 {
@@ -35,7 +35,7 @@ return (line);
  */
 int handle_args(int *exe_ret)
 {
-int ret = 0, index;
+int ret = 0;
 char **args, *line = NULL, **front;
 line = get_args(line, exe_ret);
 if (!line)
@@ -70,6 +70,7 @@ int call_args(char **args, char **front, int *exe_ret)
 {
 int ret = 0;
 ret = run_args(args, front, exe_ret);
+return (ret);
 }
 
 /**

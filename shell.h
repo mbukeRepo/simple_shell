@@ -10,8 +10,12 @@
 #include <sys/stat.h>
 #define END_OF_FILE -2
 #define EXIT -3
-char *name;
+
+/* Global environemnt */
 extern char **environ;
+/* Global program name */
+char *name;
+/* Global history counter */
 int hist;
 
 /**
@@ -21,8 +25,8 @@ int hist;
  */
 typedef struct list_s
 {
-    char *dir;
-    struct list_s *next;
+char *dir;
+struct list_s *next;
 } list_t;
 
 /**
@@ -32,8 +36,8 @@ typedef struct list_s
  */
 typedef struct builtin_s
 {
-    char *name;
-    int (*f)(char **argv, char **front);
+char *name;
+int (*f)(char **argv, char **front);
 } builtin_t;
 
 
@@ -43,7 +47,7 @@ int handle_args(int *exe_ret);
 int (*get_builtin(char *command))(char **args, char **front);
 
 /* built-ins */
-int mshell_env(char **args, char __attribute__((__unused__)) * *front);
+int mshell_env(char **args, char __attribute__((__unused__)) **front);
 int mshell_exit(char **args, char **front);
 /* errors */
 char *_itoa(int num);
