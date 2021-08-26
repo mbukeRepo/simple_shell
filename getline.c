@@ -92,7 +92,6 @@ free(buffer);
  * @lineptr: A buffer to store the input.
  * @n: The size of lineptr.
  * @stream: The stream to read from.
- *
  * Return: The number of bytes read.
  */
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream)

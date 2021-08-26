@@ -28,7 +28,6 @@ int status, ret = 0;
 pid_t child_pid;
 char *command = userinput[0];
 (void) front;
-(void) userinput;
 if (command[0] != '.' && command[0] != '/')
 {
 command = get_location(command);
@@ -75,15 +74,11 @@ return (ret);
  */
 int main(int argc, char **argv)
 {
-
 char *newline = "\n", *prompt = "$ ";
 int ret = 0, retn;
-
 int *exe_ret = &retn;
-
 (void) argc;
 name = argv[0];
-
 hist = 1;
 signal(SIGINT, sig_handler);
 environ = _copy_env();
@@ -105,7 +100,6 @@ free_env();
 exit(*exe_ret);
 }
 }
-
 free_env();
 return (0);
 }
