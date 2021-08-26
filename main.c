@@ -3,125 +3,113 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-
+/**
+ * sig_handler - Prints a new prompt upon a signal.
+ * @sig: The signal.
+ */
 void sig_handler(int sig)
 {
-    char *newline = "\n$ ";
-    (void)sig;
-    signal(SIGINT, sig_handler);
-    write(STDOUT_FILENO, newline, 3);
+char *newline = "\n$ ";
+(void)sig;
+signal(SIGINT, sig_handler);
+write(STDOUT_FILENO, newline, 3);
 }
-
+/**
+ * execute - Executes a command in a child process.
+ * @userinput: An array of arguments.
+ * @front: A double pointer to the beginning of args.
+ *
+ * Return: If an error occurs - a corresponding error code.
+ *         O/w - The exit value of the last executed command.
+ */
 int execute(char **userinput, char **front)
 {
-    int status, flag, ret = 0;
-    pid_t child_pid;
-    int exec_res;
-    char *command = userinput[0];
-
-    if (command[0] != '.' && command[0] != '/')
-    {
-        // do stuff
-    }
-    if (!command || access(command, F_OK) == -1)
-    {
-        if (errno == EACCES)
-        {
-            ret = create_error(userinput, 126);
-        }
-        else
-        {
-            ret = create_error(userinput, 127);
-        }
-    }
-
-    child_pid = fork();
-
-    if (child_pid == -1)
-    {
-        perror("Error child:");
-        return (-1);
-    }
-
-    else if (child_pid == 0)
-    {
-        execve(command, userinput, environ);
-        if (errno == EACCES)
-        {
-            ret = create_error(userinput, 126);
-        }
-    }
-    else
-    {
-        wait(&status);
-    }
-    //     int i = 0;
-    //     while (i < 3)
-    //     {
-    //         printf("%s\n", userinput[i]);
-    //         i++;
-    //     }
-    return (ret);
+int status, flag = 0, ret = 0, exec_res;
+pid_t child_pid;
+char *command = userinput[0];
+if (command[0] != '.' && command[0] != '/')
+{
+flag = 1;
+command = get_location(command);
 }
-
+if (!command || access(command, F_OK) == -1)
+{
+if (errno == EACCES)
+{
+ret = create_error(userinput, 126);
+}
+else
+{
+ret = create_error(userinput, 127);
+}
+}
+else
+{
+child_pid = fork();
+if (child_pid == -1)
+{
+return (-1);
+}
+else if (child_pid == 0)
+{
+execve(command, userinput, environ);
+if (errno == EACCES)
+{
+ret = create_error(userinput, 126);
+}
+}
+else
+{
+wait(&status);
+}
+}
+return (ret);
+}
+/**
+ * main - Runs a simple UNIX command interpreter.
+ * @argc: The number of arguments supplied to the program.
+ * @argv: An array of pointers to the arguments.
+ *
+ * Return: The return value of the last executed command.
+ */
 int main(int argc, char **argv)
 {
-    char *lineptr = NULL;
+char *lineptr = NULL;
 
-    char **userinput;
-    char *newline = "\n", *prompt = "$ ";
-    int ret = 0, retn;
+char **userinput;
+char *newline = "\n", *prompt = "$ ";
+int ret = 0, retn;
 
-    int *exe_ret = &retn;
-    name = argv[0];
-    printf("%s\n", name);
-    hist = 1;
-    // handle ctrl + d
+int *exe_ret = &retn;
+name = argv[0];
 
-    signal(SIGINT, sig_handler);
+hist = 1;
 
-    // COPYING ENVIRONMENT VARIABLES
 
-    environ = _copy_env();
-    if (!environ)
-    {
-        exit(-100);
-    }
+signal(SIGINT, sig_handler);
 
-    // handle input from terminal
 
-    // handle input from file
 
-    // handle input from interractive shell
+environ = _copy_env();
+if (!environ)
+{
+exit(-100);
+}
+while (1)
+{
+write(STDOUT_FILENO, prompt, 2);
+ret = handle_args(exe_ret);
+if (ret == END_OF_FILE || ret == EXIT)
+{
+if (ret == END_OF_FILE)
+{
+write(STDOUT_FILENO, newline, 1);
+}
+free_env();
+exit(*exe_ret);
+}
+}
 
-    while (1)
-    {
-        write(STDOUT_FILENO, prompt, 2);
-        ret = handle_args(exe_ret);
-        if (ret == END_OF_FILE || ret == EXIT)
-        {
-            if (ret == END_OF_FILE)
-            {
-                write(STDOUT_FILENO, newline, 1);
-            }
-            free_env();
-            exit(*exe_ret);
-        }
-    }
-
-    // char *argv[] = {"/bin/l", "-l", "/usr/", NULL};
-    // // printing prompt
-
-    // write(STDOUT_FILENO, "$ ", 2);
-    // // getting command from user
-
-    // _getline(&lineptr, &n, STDIN_FILENO);
-    // userinput = _strtok(lineptr, " ");
-
-    // // executing command
-    // execute(argv);
-
-    // free(lineptr);
-    free_env();
-    return (0);
+free_env();
+return (0);
 }

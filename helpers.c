@@ -6,10 +6,10 @@
  */
 void free_args(char **args, char **front)
 {
-    size_t i;
+size_t i;
 
-    for (i = 0; args[i] || args[i + 1]; i++)
-        free(args[i]);
+for (i = 0; args[i] || args[i + 1]; i++)
+free(args[i]);
 
-    free(front);
+free(front);
 }
