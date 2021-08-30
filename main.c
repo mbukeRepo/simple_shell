@@ -27,7 +27,7 @@ int execute(char **userinput, char **front)
 int status, ret = 0;
 pid_t child_pid;
 char *command = userinput[0];
-(void) front;
+(void)front;
 if (command[0] != '.' && command[0] != '/')
 {
 command = get_location(command);
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 char *newline = "\n", *prompt = "$ ";
 int ret = 0, retn;
 int *exe_ret = &retn;
-(void) argc;
+(void)argc;
 name = argv[0];
 hist = 1;
 signal(SIGINT, sig_handler);
@@ -85,6 +85,17 @@ environ = _copy_env();
 if (!environ)
 {
 exit(-100);
+}
+
+
+if (!isatty(STDIN_FILENO))
+{
+while (ret != END_OF_FILE && ret != EXIT)
+{
+ret = handle_args(exe_ret);
+}
+free_env();
+return (*exe_ret);
 }
 while (1)
 {
