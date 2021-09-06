@@ -86,8 +86,6 @@ if (!environ)
 {
 exit(-100);
 }
-
-
 if (!isatty(STDIN_FILENO))
 {
 while (ret != END_OF_FILE && ret != EXIT)
